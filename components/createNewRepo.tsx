@@ -23,9 +23,14 @@ const CreateRepoForm: React.FC<any> = ({}) => {
     resolver: yupResolver(validationSchema)
   });
 
-  // const handleCreateRepo = useCallback((formValues: RepoFormData) => {
-  //   console.log(formValues);
-  // }, []);
+  const handleCreateRepo = useCallback((formValues: RepoFormData) => {
+    console.log(formValues);
+    alert(JSON.stringify(formValues));
+    createRepo({
+      variables: formValues,
+      refetchQueries: [{ query: GET_REPOSITORIES }],
+    });
+  }, []);
 
 
   const [name, setName] = useState("");
@@ -38,15 +43,15 @@ const CreateRepoForm: React.FC<any> = ({}) => {
     variables: { name, visibility },
   });
 
-  const handleCreateRepo = (formData: any) => {
-    alert(JSON.stringify(formData));
-    createRepo({
-      variables: { name, visibility },
-      refetchQueries: [{ query: GET_REPOSITORIES }],
-    });
-    setName('');
-    setVisibility('')
-  };
+  // const handleCreateRepo = (formData: any) => {
+  //   alert(JSON.stringify(formData));
+  //   createRepo({
+  //     variables: { name, visibility },
+  //     refetchQueries: [{ query: GET_REPOSITORIES }],
+  //   });
+  //   setName('');
+  //   setVisibility('')
+  // };
 
   return (
     <div>
