@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Profile from '../components/profile'
 import Repository from '../components/repository'
-import CreateRepo from '../components/createNewRepo'
+import CreateRepoForm from '../components/createNewRepo'
 
 export default function IndexPage({}) {
   return (
@@ -11,9 +11,9 @@ export default function IndexPage({}) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
+      <main >
         <Profile />
-        <CreateRepo />
+        <CreateRepoForm />
         <Repository />
       </main>
 

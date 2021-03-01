@@ -1,72 +1,88 @@
-const CreateRepo: React.FC<any> = ({}) => { 
-  return(
-    <div> create repo</div>
-  )
-}
-export default CreateRepo;
+import React, { useState, useCallback, useMemo } from "react";
+import { useMutation } from "@apollo/client";
+import { useForm } from "react-hook-form";
+import { CREATE_REPO, GET_REPOSITORIES } from "../queries/queries";
+import { RepoFormData } from "../types";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+ 
+const CreateRepoForm: React.FC<any> = ({}) => {
 
-// import React from "react";
-// import { Formik, ErrorMessage } from "formik";
-// import { Input, Button, Form } from "antd";
-// import * as Yup from "yup";
+  // const validationSchema = Yup.object().shape({
+  //   name: Yup.string().required("Repository name is required1"),
+  //   visibility: Yup.string().required("Visibility is required,,"),
+  // });
+  const validationSchema = useMemo(() => (
+    yup.object().shape({
+      name: yup.string().required("Repository name is required..."),
+      visibility: yup.string().required("Visibility is required11"),
+    })
+  ), [])
 
-// const CreateRepo: React.FC<any> = ({}) => {
-//   const createRepo = Yup.object().shape({
-//     name: Yup.string().required("Repository name is required"),
-//     visibility: Yup.string().required("Visibility is required"),
-//   });
+  const { register, handleSubmit, errors } = useForm<RepoFormData>({
+    resolver: yupResolver(validationSchema)
+  });
 
-// 	const handleSubmit = (data: any) => {
-// 		// this.props.login(data);
-//   };
-  
-//   return (
-//     <div className="container-body">
-//       <Formik
-//         initialValues={{
-//           name: "",
-//           visibility: "",
-//         }}
-//         validationSchema={createRepo}
-//         onSubmit={handleSubmit}
-//         render={({ handleSubmit, handleChange, values }) => (
-//           <Form onSubmit={handleSubmit}>
-//             <Form.Item>
-//               <Input
-//                 type="text"
-//                 onChange={handleChange}
-//                 value={values.name}
-//                 name="name"
-//                 placeholder="Enter Repo Name"
-//               />
-//               <ErrorMessage bottom component={ErrorBlock} name="email" />
-//             </Form.Item>
-//             <Form.Item>
-//               <Input
-//                 type="password"
-//                 onChange={handleChange}
-//                 value={values.password}
-//                 name="password"
-//                 placeholder="Password"
-//               />
-//               <ErrorMessage bottom component={ErrorBlock} name="password" />
-//             </Form.Item>
-//             <Button htmlType="submit" className="btn" type="primary">
-//               Signin
-//             </Button>
-//           </Form>
-//         )}
-//       />
-//       <hr className="divider" />
-//       <div className="form-group">
-//         <div className="forgot-part text-right">
-//           <span className="forgot" onClick={onRegister}>
-//             Register your account?
-//           </span>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
+  // const handleCreateRepo = useCallback((formValues: RepoFormData) => {
+  //   console.log(formValues);
+  // }, []);
 
-// export default CreateRepo;
+
+  const [name, setName] = useState("");
+  const [visibility, setVisibility] = useState("");
+
+
+  const [createRepo, { error, data }] = useMutation<{
+    createRepo: RepoFormData;
+  }>(CREATE_REPO, {
+    variables: { name, visibility },
+  });
+
+  const handleCreateRepo = (formData: any) => {
+    alert(JSON.stringify(formData));
+    createRepo({
+      variables: { name, visibility },
+      refetchQueries: [{ query: GET_REPOSITORIES }],
+    });
+    setName('');
+    setVisibility('')
+  };
+
+  return (
+    <div>
+      <h3>Create Repository</h3>
+      {error ? <p>Oh no! {error.message}</p> : null}
+      {data && data.createRepo ? <p>Saved!</p> : null}
+      <form onSubmit={handleSubmit(handleCreateRepo)}>
+      <div className="form-group col-6">
+          <label>Name</label>
+          <input
+            ref={register({required: true })}
+            type="text"
+            name="name"
+            onChange={(e) => setName(e.target.value)}
+            className={`form-control ${errors.name ? "is-invalid" : ""}`}
+          />
+          <div className="invalid-feedback">{errors.name?.message}</div>
+        </div>
+        <div className="form-group col-6">
+          <label>Visibility</label>
+          <select
+            ref={register({required: true })}
+            name="visibility"
+            onChange={(e) => setVisibility(e.target.value)}
+            className={`form-control ${errors.name ? "is-invalid" : ""}`}
+          >
+            <option value="">Select visibility</option>
+            <option value="PRIVATE">PRIVATE</option>
+            <option value="PUBLIC">PUBLIC</option>
+          </select>
+          <div className="invalid-feedback">{errors.name?.message}</div>
+        </div>
+        <button type="submit">Create Repo</button>
+      </form>
+    </div>
+  );
+};
+
+export default CreateRepoForm;

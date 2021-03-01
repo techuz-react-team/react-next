@@ -16,3 +16,8 @@ export interface RepoListProps {
 export interface Repos {
   name: string;
 }
+
+export interface RepoFormData {
+  name: string;
+  Visibilty: string;
+}
