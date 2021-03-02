@@ -1,5 +1,8 @@
 import { gql } from "@apollo/client";
 
+/**
+ * query for username and email
+ */
 const GET_PROFILE = gql`
   query getProfile {
     viewer {
@@ -9,6 +12,9 @@ const GET_PROFILE = gql`
   }
 `;
 
+/**
+ * query for repository list
+ */
 const GET_REPOSITORIES = gql`
   query getRepositories {
     viewer {
@@ -16,15 +22,15 @@ const GET_REPOSITORIES = gql`
         totalCount
         nodes {
           name
-          # owner {
-          #   login
-          # }
         }
       }
     }
   }
 `;
 
+/**
+ * query for create repository
+ */
 const CREATE_REPO = gql`
   mutation createRepo($name: String!, $visibility: RepositoryVisibility!) {
     createRepository(input: { name: $name, visibility: $visibility }) {

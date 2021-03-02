@@ -3,7 +3,9 @@ import { RepoListProps, Repos } from "../types";
 import { useQuery } from "@apollo/client";
 import { GET_REPOSITORIES } from "../queries/queries";
 
-
+/**
+ * Function component to get github repository list
+ */
 const Repository: React.FC<any> = ({  }) => {
     
   const { data } = useQuery(GET_REPOSITORIES);

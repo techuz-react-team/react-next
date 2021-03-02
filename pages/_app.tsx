@@ -1,18 +1,29 @@
-import type { AppProps } from 'next/app';
-import { ApolloProvider, ApolloClient, InMemoryCache, ApolloLink, HttpLink } from '@apollo/client';
+import type { AppProps } from "next/app";
+import {
+  ApolloProvider,
+  ApolloClient,
+  InMemoryCache,
+  ApolloLink,
+  HttpLink,
+} from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
-import '../styles.css'
+import "../styles.css";
 
+/**
+ * Baseurl of github
+ */
 const GITHUB_BASE_URL = "https://api.github.com/graphql";
 
 const httpLink = new HttpLink({
   uri: GITHUB_BASE_URL,
   headers: {
-    authorization: `Bearer 619c180a105016710dc70c7fd0a0778ce872500b`,
-    // authorization: `Bearer ${process.env.REACT_APP_GITHUB_PERSONAL_ACCESS_TOKEN}`,
+    Authorization: `Bearer ${process.env.REACT_APP_GITHUB_PERSONAL_ACCESS_TOKEN}`,
   },
 });
 
+/**
+ *  Error part of graphql or network error
+ */
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.map(({ message, locations, path }) =>
@@ -28,10 +39,13 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
 const link = ApolloLink.from([errorLink, httpLink]);
 
+/**
+ *  Using Apollo client set url and header link
+ */
 const client = new ApolloClient({
   uri: GITHUB_BASE_URL,
   cache: new InMemoryCache(),
-  link
+  link,
 });
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
@@ -40,6 +54,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
       <Component {...pageProps} />
     </ApolloProvider>
   );
-}
+};
 
 export default MyApp;
